@@ -1,19 +1,22 @@
-/*
 #[test_only]
 module contractsb_b_k_prm::contractsb_b_k_prm_tests;
-// uncomment this line to import the module
-// use contractsb_b_k_prm::contractsb_b_k_prm;
-
-#[error(code = 0)]
-const ENotImplemented: vector<u8> = b"Not Implemented";
+use contractsb_b_k_prm::contractsb_b_k_prm;
 
 #[test]
-fun test_contractsb_b_k_prm() {
-    // pass
+fun test_winner_draw() {
+    assert!(contractsb_b_k_prm::test_decide_winner(0, 0) == 0, 0);
 }
 
-#[test, expected_failure(abort_code = ::contractsb_b_k_prm::contractsb_b_k_prm_tests::ENotImplemented)]
-fun test_contractsb_b_k_prm_fail() {
-    abort ENotImplemented
+#[test]
+fun test_winner_player1() {
+    assert!(contractsb_b_k_prm::test_decide_winner(0, 2) == 1, 1);
+    assert!(contractsb_b_k_prm::test_decide_winner(1, 0) == 1, 2);
+    assert!(contractsb_b_k_prm::test_decide_winner(2, 1) == 1, 3);
 }
-*/
+
+#[test]
+fun test_winner_player2() {
+    assert!(contractsb_b_k_prm::test_decide_winner(2, 0) == 2, 4);
+    assert!(contractsb_b_k_prm::test_decide_winner(0, 1) == 2, 5);
+    assert!(contractsb_b_k_prm::test_decide_winner(1, 2) == 2, 6);
+}

@@ -1,4 +1,5 @@
 import React from 'react';
+import { ConnectButton } from '@mysten/dapp-kit';
 
 const Navbar: React.FC = () => {
   return (
@@ -28,9 +29,7 @@ const Navbar: React.FC = () => {
             </li>
           </ul>
           <div className="d-flex align-items-center">
-            <button className="btn btn-primary rounded-pill px-4 shadow-sm" type="button">
-              Connect Wallet
-            </button>
+            <ConnectButton />
           </div>
         </div>
       </div>
