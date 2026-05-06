@@ -15,9 +15,6 @@ const CHOICE_ROCK = 0;
 const CHOICE_PAPER = 1;
 const CHOICE_SCISSORS = 2;
 
-function isHexAddress(value: string) {
-  return /^0x[a-fA-F0-9]{2,}$/.test(value);
-}
 
 function toMist(amountSui: string): bigint {
   const normalized = amountSui.trim();
@@ -70,7 +67,6 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ id, onCreated }) => {
   const [secretChoice, setSecretChoice] = React.useState<number>(CHOICE_ROCK);
   const [status, setStatus] = React.useState<string | null>(null);
   const [error, setError] = React.useState<string | null>(null);
-  const [nowMs, setNowMs] = React.useState<bigint>(BigInt(Date.now()));
 
   React.useEffect(() => {
     const array = new Uint8Array(16);
