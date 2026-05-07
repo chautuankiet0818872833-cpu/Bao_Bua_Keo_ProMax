@@ -5,6 +5,7 @@ import GameDashboard from './components/GameDashboard'
 import FriendManager from './components/FriendManager'
 import InviteList from './components/InviteList'
 import CreateInviteModal from './components/CreateInviteModal'
+import { saveSecretFallback } from './utils/secretManager'
 
 function App() {
   const [activeGameId, setActiveGameId] = useState('')
@@ -29,10 +30,17 @@ function App() {
     setInviteFriend(null)
   }
 
-  const onCreatedGame = (gameId: string, txDigest: string, secret: { choice: number; salt: string }) => {
+  const onCreatedGame = async (gameId: string, txDigest: string, secret: { choice: number; salt: string }) => {
     setActiveGameId(gameId)
     setLastTxDigest(txDigest)
-    window.localStorage.setItem(`bbk:secret:${gameId}`, JSON.stringify(secret))
+    
+    // Save secret using improved manager
+    try {
+      await saveSecretFallback(gameId, secret.choice, secret.salt)
+    } catch (error) {
+      console.error('Failed to save secret:', error)
+      // Fallback handled in saveSecretFallback
+    }
   }
 
   const onInviteAccepted = (gameId: string, txDigest: string) => {
