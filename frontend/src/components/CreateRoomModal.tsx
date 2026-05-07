@@ -86,7 +86,7 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ id, onCreated }) => {
       if (!account) throw new Error('Bạn cần kết nối ví trước khi tạo phòng.');
       if (!packageId) throw new Error('Thiếu VITE_PACKAGE_ID. Hãy cấu hình package id của smart contract.');
       
-      const publicAddress = '0x0000000000000000000000000000000000000000000000000000000000000000';
+      const publicAddress = '0x0';
 
       if (!secretSalt.trim()) throw new Error('Bạn cần nhập mã bí mật.');
       if (![CHOICE_ROCK, CHOICE_PAPER, CHOICE_SCISSORS].includes(secretChoice)) {

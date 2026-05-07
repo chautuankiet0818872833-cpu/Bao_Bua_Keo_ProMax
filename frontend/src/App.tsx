@@ -23,7 +23,13 @@ function extractGameId(input: string) {
 
 function parseState(raw: unknown) {
   if (typeof raw === 'string') return raw;
-  if (raw && typeof raw === 'object' && 'variant' in raw) return (raw as { variant: string }).variant;
+  if (raw && typeof raw === 'object') {
+    if ('variant' in raw) return (raw as { variant: string }).variant;
+    // Handle { Waiting: null }, { Reveal: null } formats
+    if ('Waiting' in raw) return 'Waiting';
+    if ('Reveal' in raw) return 'Reveal';
+    if ('Finished' in raw) return 'Finished';
+  }
   return 'Waiting';
 }
 
@@ -88,6 +94,14 @@ function App() {
     try {
       setIsJoiningTx(true);
       setJoinError('');
+      
+      console.log('--- Joining Game Debug ---');
+      console.log('Game ID:', currentGameId);
+      console.log('Current Player2 in Object:', gameFields.player2);
+      console.log('Current State in Object:', gameFields.state);
+      console.log('Wager Mist:', wagerMist.toString());
+      console.log('My Address:', account?.address);
+
       const tx = new Transaction();
       const [wagerCoin] = tx.splitCoins(tx.gas, [tx.pure.u64(wagerMist)]);
       tx.moveCall({
