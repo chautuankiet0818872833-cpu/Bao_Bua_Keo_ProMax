@@ -72,7 +72,8 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ id, onCreated }) => {
     const array = new Uint8Array(16);
     window.crypto.getRandomValues(array);
     const hex = Array.from(array).map(b => b.toString(16).padStart(2, '0')).join('');
-    setSecretSalt(hex);
+    // Tránh setState đồng bộ trực tiếp trong effect (ESLint rule purity).
+    window.setTimeout(() => setSecretSalt(hex), 0);
   }, []);
 
   const packageId = import.meta.env.VITE_PACKAGE_ID as string | undefined;

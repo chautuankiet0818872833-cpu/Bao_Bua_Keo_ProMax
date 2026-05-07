@@ -152,9 +152,10 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ gameId, inviteLink, txDig
   const game = parseGameObject(data);
   const [statusMsg, setStatusMsg] = React.useState<string | null>(null);
   const [error, setError] = React.useState<string | null>(null);
-  const [nowMs, setNowMs] = React.useState<bigint>(BigInt(Date.now()));
+  const [nowMs, setNowMs] = React.useState<bigint>(0n);
 
   React.useEffect(() => {
+    window.setTimeout(() => setNowMs(BigInt(Date.now())), 0)
     const timer = window.setInterval(() => {
       setNowMs(BigInt(Date.now()));
     }, 1000);
@@ -171,18 +172,7 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ gameId, inviteLink, txDig
   const isPlayer1 = !!account && !!game && account.address.toLowerCase() === game.player1.toLowerCase();
   const isPlayer2 = !!account && !!game && account.address.toLowerCase() === game.player2.toLowerCase();
 
-  // --- Auto Reveal Feature ---
-  React.useEffect(() => {
-    if (game?.status === 'reveal' && isPlayer1 && !isPending && !statusMsg?.includes('thành công')) {
-      const saved = window.localStorage.getItem(`bbk:secret:${gameId}`);
-      if (saved) {
-        console.log('Phát hiện đối thủ đã tham gia, tự động lật bài...');
-        doReveal();
-      }
-    }
-  }, [game?.status, isPlayer1]);
-
-  const doReveal = async () => {
+  const doReveal = React.useCallback(async () => {
     try {
       setError(null);
       const saved = window.localStorage.getItem(`bbk:secret:${gameId}`);
@@ -206,7 +196,20 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ gameId, inviteLink, txDig
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Không thể reveal.');
     }
-  };
+  }, [gameId, refetch, signAndExecuteTransaction]);
+
+  // --- Auto Reveal Feature ---
+  React.useEffect(() => {
+    if (game?.status === 'reveal' && isPlayer1 && !isPending && !statusMsg?.includes('thành công')) {
+      const saved = window.localStorage.getItem(`bbk:secret:${gameId}`);
+      if (saved) {
+        console.log('Phát hiện đối thủ đã tham gia, tự động lật bài...');
+        window.setTimeout(() => {
+          void doReveal();
+        }, 0)
+      }
+    }
+  }, [doReveal, game?.status, gameId, isPending, isPlayer1, statusMsg]);
 
   const doClaimTimeout = async () => {
     try {
@@ -315,16 +318,18 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ gameId, inviteLink, txDig
               <div className="fw-bold">Tạo phòng thành công</div>
               <div className="small mb-2">Game ID: <code>{gameId}</code></div>
               {txDigest && <div className="small mb-2">Tx: <code>{txDigest}</code></div>}
-              <div className="d-flex gap-2 flex-wrap">
-                <input className="form-control" value={inviteLink} readOnly />
-                <button
-                  className="btn btn-primary"
-                  type="button"
-                  onClick={() => navigator.clipboard.writeText(inviteLink)}
-                >
-                  Copy link mời
-                </button>
-              </div>
+                    {inviteLink && (
+                      <div className="d-flex gap-2 flex-wrap">
+                        <input className="form-control" value={inviteLink} readOnly />
+                        <button
+                          className="btn btn-primary"
+                          type="button"
+                          onClick={() => navigator.clipboard.writeText(inviteLink)}
+                        >
+                          Copy link mời
+                        </button>
+                      </div>
+                    )}
             </div>
           </div>
         </div>
@@ -345,7 +350,7 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ gameId, inviteLink, txDig
                 <div className="card-body p-4 p-md-5">
                   <h4 className="fw-bold mb-3">Sảnh chờ</h4>
                   <p className="text-muted mb-4">
-                    Phòng đã được tạo. Gửi link mời cho người chơi B và chờ họ tham gia trước khi hết thời gian.
+                    Phòng đã được tạo. Người chơi B sẽ bấm <strong>Chấp nhận</strong> ở mục <strong>Lời mời đang chờ</strong> trước khi hết thời gian.
                   </p>
 
                   <div className="d-flex align-items-center justify-content-between bg-light rounded-3 p-3 mb-3 flex-wrap gap-2">
@@ -367,14 +372,18 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ gameId, inviteLink, txDig
                   </div>
 
                   <div className="d-flex gap-2 flex-wrap">
-                    <input className="form-control" value={inviteLink} readOnly />
-                    <button
-                      className="btn btn-primary"
-                      type="button"
-                      onClick={() => navigator.clipboard.writeText(inviteLink)}
-                    >
-                      Copy link mời
-                    </button>
+                    {inviteLink && (
+                      <>
+                        <input className="form-control" value={inviteLink} readOnly />
+                        <button
+                          className="btn btn-primary"
+                          type="button"
+                          onClick={() => navigator.clipboard.writeText(inviteLink)}
+                        >
+                          Copy link mời
+                        </button>
+                      </>
+                    )}
                     <button className="btn btn-outline-secondary" type="button" onClick={onBackHome}>
                       Quay lại trang chủ
                     </button>

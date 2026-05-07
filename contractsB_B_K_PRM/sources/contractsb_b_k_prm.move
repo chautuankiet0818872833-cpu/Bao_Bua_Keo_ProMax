@@ -50,6 +50,11 @@ public struct GameTimedOut has copy, drop {
     is_waiting_stage: bool,
 }
 
+public struct PresencePing has copy, drop {
+    user: address,
+    last_seen_ms: u64,
+}
+
 const EInvalidChoice: u64 = 1;
 const EInvalidState: u64 = 2;
 const EInvalidPlayer: u64 = 3;
@@ -64,6 +69,16 @@ const CHOICE_SCISSORS: u8 = 2;
 const RESULT_DRAW: u8 = 0;
 const RESULT_PLAYER1_WIN: u8 = 1;
 const RESULT_PLAYER2_WIN: u8 = 2;
+
+public fun ping(
+    clock: &Clock,
+    ctx: &mut sui::tx_context::TxContext,
+) {
+    sui::event::emit(PresencePing {
+        user: sui::tx_context::sender(ctx),
+        last_seen_ms: sui::clock::timestamp_ms(clock),
+    });
+}
 
 public fun create_game(
     wager_coin: Coin<SUI>,
