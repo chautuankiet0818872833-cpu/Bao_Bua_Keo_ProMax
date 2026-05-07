@@ -1,9 +1,14 @@
 import React from 'react';
 import { ConnectButton } from '@mysten/dapp-kit';
 
-const Navbar: React.FC = () => {
+type NavbarProps = {
+  theme: 'light' | 'dark'
+  onToggleTheme: () => void
+}
+
+const Navbar: React.FC<NavbarProps> = ({ theme, onToggleTheme }) => {
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+    <nav className="navbar navbar-expand-lg navbar-custom shadow-sm border-bottom">
       <div className="container">
         <a className="navbar-brand fw-bold" href="/">
           <span className="text-primary">Bao</span> Bua Keo <span className="text-danger">ProMax</span>
@@ -29,6 +34,13 @@ const Navbar: React.FC = () => {
             </li>
           </ul>
           <div className="d-flex align-items-center">
+            <button
+              type="button"
+              className="btn btn-sm btn-outline-secondary rounded-pill me-2"
+              onClick={onToggleTheme}
+            >
+              {theme === 'dark' ? 'Sáng' : 'Tối'}
+            </button>
             <ConnectButton />
           </div>
         </div>

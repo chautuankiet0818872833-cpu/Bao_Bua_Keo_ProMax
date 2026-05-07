@@ -245,9 +245,9 @@ const FriendManager: React.FC<FriendManagerProps> = ({ onInviteRequested }) => {
               const online = !!onlineMap[f]
               return (
                 <div key={f} className="col-12">
-                  <div className="d-flex align-items-center justify-content-between bg-white bg-opacity-5 border rounded-3 px-3 py-2">
+                  <div className="d-flex align-items-center justify-content-between bg-light border rounded-3 px-3 py-2">
                     <div className="d-flex align-items-center gap-3 overflow-hidden">
-                      <div className="avatar bg-white bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center pulse-glow" style={{ width: 42, height: 42 }}>
+                      <div className="avatar bg-secondary bg-opacity-25 rounded-circle d-flex align-items-center justify-content-center" style={{ width: 42, height: 42 }}>
                         <i className="bi bi-person-check-fill text-info" />
                       </div>
                       <div className="overflow-hidden">

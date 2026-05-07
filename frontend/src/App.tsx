@@ -1,5 +1,5 @@
 import './App.css'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Navbar from './components/Navbar'
 import GameDashboard from './components/GameDashboard'
 import FriendManager from './components/FriendManager'
@@ -10,6 +10,18 @@ function App() {
   const [activeGameId, setActiveGameId] = useState('')
   const [lastTxDigest, setLastTxDigest] = useState('')
   const [inviteFriend, setInviteFriend] = useState<string | null>(null)
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    const stored = window.localStorage.getItem('bbk:theme')
+    return stored === 'dark' ? 'dark' : 'light'
+  })
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('theme-dark', theme === 'dark')
+    document.documentElement.classList.toggle('theme-light', theme === 'light')
+    window.localStorage.setItem('bbk:theme', theme)
+  }, [theme])
+
+  const toggleTheme = () => setTheme((prev) => (prev === 'light' ? 'dark' : 'light'))
 
   const onBackHome = () => {
     setActiveGameId('')
@@ -29,8 +41,8 @@ function App() {
   }
 
   return (
-    <div className="min-vh-100 bg-dark text-white">
-      <Navbar />
+    <div className="min-vh-100">
+      <Navbar theme={theme} onToggleTheme={toggleTheme} />
 
       <CreateInviteModal
         open={inviteFriend != null}
@@ -52,14 +64,27 @@ function App() {
             <div className="col-lg-11">
               <div className="glass-card rounded-4 overflow-hidden">
                 <div className="card-body p-4 p-md-5">
-                  <div className="text-center mb-5">
-                    <h1
-                      className="fw-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400"
-                      style={{ background: 'var(--primary-gradient)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
-                    >
-                      Keo Bua Bao ProMax
+                  <div className="text-center mb-5 hero-section">
+                    <div className="hero-pill mb-3 d-inline-flex align-items-center gap-2">
+                      <span className="hero-pill-badge">Bao ProMax</span>
+                      <span className="text-uppercase fw-semibold text-muted small">Trò chơi blockchain</span>
+                    </div>
+
+                    <h1 className="promax-title">
+                      Kéo Búa Bao ProMax
                     </h1>
-                    <p className="text-muted mb-4 fs-5">Trò chơi Kéo Búa Bao phi tập trung trên mạng lưới Sui</p>
+
+                    <p className="hero-description mx-auto mb-4">
+                      Trải nghiệm Kéo Búa Bao phi tập trung trên mạng lưới Sui với bảo mật,
+                      minh bạch và thách đấu bạn bè ngay tức thì.
+                    </p>
+
+                    <div className="hero-tags d-flex justify-content-center flex-wrap gap-2">
+                      <span className="hero-tag">Phi tập trung</span>
+                      <span className="hero-tag">Minh bạch</span>
+                      <span className="hero-tag">Mời bạn bè</span>
+                      <span className="hero-tag">Kết quả ngay</span>
+                    </div>
                   </div>
 
                   <div className="row g-4">
